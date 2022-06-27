@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
 //file node module
-//none
+const usersRouter = require('./routes/Problem#1/usersRouter');
+const tasksRouter = require('./routes/Problem#2/tasksRouter');
 
 //URLs const
 const hostname = "localhost";
@@ -19,7 +20,8 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 
 //use file node module
-//none
+app.use('/Users',usersRouter);
+app.use('/Tasks',tasksRouter);
 
 //use public static file 
 app.use(express.static(__dirname+'/public'));
