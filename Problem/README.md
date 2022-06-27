@@ -4,13 +4,20 @@
 
 Stack ที่ใช้ : Node.js, Express, MongoDB
 
-# Installation
+# Installation **(not finished yet)**
 
-not yet finished
+1. เปิด Terminal ที่ folder Problem
+
+2. ใช้คำสั่ง
+    ```
+    npm install package-lock.json
+    ```
+
+3. **not finished yet**
 
 # Starting Server :
 
-1. เปิด Terminal ที่ folder Project
+1. เปิด Terminal ที่ folder Problem
 
 2. ใช้คำสั่ง
     ```
