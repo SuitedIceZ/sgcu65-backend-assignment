@@ -1,4 +1,4 @@
-[Insert Your Name Here]
+[ณัฐนภนต์ บำรุงศรี]
 
 # SGCU65 Backend Recruitment
 
