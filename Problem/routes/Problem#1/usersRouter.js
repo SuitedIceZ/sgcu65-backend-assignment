@@ -3,7 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 //file node module
-const dbGET = require("./../firebaseModule/firestoreGET");
+const dbGET = require("../firebaseModule/firestore");
+//const dbQuery = require("./../firebaseModule/firestoreQuery");
 
 //create UserRouter as express router
 const UserRouter = express.Router();
@@ -24,7 +25,7 @@ UserRouter.route('/')
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
         //res.end('Will send all the ' + keywordPlural + ' to you!');
-        dbGET("Users",(err,output) =>{
+        dbGET("Users","",(err,output) =>{
             if(err){
                 res.statusCode = 500;
                 console.log("ERROR : ", err.message);
@@ -48,32 +49,40 @@ UserRouter.route('/')
         res.end('Deleting all the ' + keywordPlural + '!');
     });
 
-// not support UserId yet!
-//route with UserId parameter
-/*
-UserRouter.route('/:UserId')
+
+//route with key parameter
+UserRouter.route('/:key')
     .all((req,res,next)=>{
         res.statusCode = 200;
-        res.setHeader('Content-Type','text/plain');
+        res.setHeader('Content-Type','application/json');
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        res.end('Will send the ' + keywordSigular + ': ' 
-            + req.params.UserId + ' to you!');
+        dbGET("Users",req.params.key,(err,output) =>{
+            if(err){
+                res.statusCode = 500;
+                console.log("ERROR : ", err.message);
+                res.end("ERROR : ", err.message);
+            }
+            else{
+                console.log('Test new module : ' + output.data() + ' to you!');
+                res.end(output.data());
+            }
+        })
     })
     .post((req,res,next) => { //use http POST REST request
         res.statusCode = 403;
         res.end('POST operation not supported on /' + keywordPlural + '/'
-            + req.params.UserId);
+            + req.params.key);
     })
     .put((req,res,next) => { //use http PUT REST request
-        res.write('Updating the ' + keywordSigular + ': ' + req.params.UserId + '\n');
+        res.write('Updating the ' + keywordSigular + ': ' + req.params.key + '\n');
         res.end('Will update the ' + keywordSigular + ': ' + req.body.name + 
             ' with detail: ' + req.body.description);
     })
     .delete((req,res,next) => { //use http DELETE REST request
-        res.end('Deleting the ' + keywordSigular + ': '+ req.params.UserId );
+        res.end('Deleting the ' + keywordSigular + ': '+ req.params.key );
     });
-*/
+
 
 module.exports = UserRouter;

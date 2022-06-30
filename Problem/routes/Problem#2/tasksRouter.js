@@ -2,6 +2,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+//file node module
+const dbGET = require("./../firebaseModule/firestore");
+
 //create TaskRouter as express router
 const TaskRouter = express.Router();
 
@@ -16,11 +19,21 @@ const keywordPlural = "Tasks"; // replace Tasks by ' + keywordPlural + ' // for 
 TaskRouter.route('/')
     .all((req,res,next)=>{
         res.statusCode = 200;
-        res.setHeader('Content-Type','text/plain');
+        res.setHeader('Content-Type','application/json');
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        res.end('Will send all the ' + keywordPlural + ' to you!');
+        dbGET("Tasks","",(err,output) =>{
+            if(err){
+                res.statusCode = 500;
+                console.log("ERROR : ", err.message);
+                res.end("ERROR : ", err.message);
+            }
+            else{
+                console.log('Test new module : ' + output.data() + ' to you!');
+                res.end(output.data());
+            }
+        }) 
     })
     .post((req,res,next) => { //use http POST REST request
         res.end('Will add the ' + keywordSigular + ': ' + req.body);
@@ -33,28 +46,37 @@ TaskRouter.route('/')
         res.end('Deleting all the ' + keywordPlural + '!');
     });
 
-//route with TaskId parameter
-TaskRouter.route('/:TaskId')
+//route with key parameter
+TaskRouter.route('/:key')
     .all((req,res,next)=>{
         res.statusCode = 200;
-        res.setHeader('Content-Type','text/plain');
+        res.setHeader('Content-Type','application/json');
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        res.end('Will send the ' + keywordSigular + ': ' 
-            + req.params.TaskId + ' to you!');
+        dbGET("Tasks",req.params.key,(err,output) =>{
+            if(err){
+                res.statusCode = 500;
+                console.log("ERROR : ", err.message);
+                res.end("ERROR : ", err.message);
+            }
+            else{
+                console.log('Test new module : ' + output.data() + ' to you!');
+                res.end(output.data());
+            }
+        })
     })
     .post((req,res,next) => { //use http POST REST request
         res.statusCode = 403;
         res.end('POST operation not supported on /' + keywordPlural + '/'
-            + req.params.TaskId);
+            + req.params.key);
     })
     .put((req,res,next) => { //use http PUT REST request
-        res.write('Updating the ' + keywordSigular + ': ' + req.params.TaskId + '\n');
+        res.write('Updating the ' + keywordSigular + ': ' + req.params.key + '\n');
         res.end('Will update the ' + keywordSigular + ': ' + req.body);
     })
     .delete((req,res,next) => { //use http DELETE REST request
-        res.end('Deleting the ' + keywordSigular + ': '+ req.params.TaskId );
+        res.end('Deleting the ' + keywordSigular + ': '+ req.params.key );
     });
 
 

@@ -48,4 +48,10 @@ Database ที่ใช้ : Cloud Firestore
     ```
 2. To be continue ...
 
+# Addtional Idea : เพิ่ม field Tasks ในแต่ละ user เก็บ array ของ task ทั้งหมดที่ user นั้นๆรับผิดชอบ
+
+# Addtional Idea : เพิ่ม field Users ในแต่ละ task เก็บ array ของ user ทั้งหมดที่รับผิดชอบ task นั้นๆ
+
+
+
 
