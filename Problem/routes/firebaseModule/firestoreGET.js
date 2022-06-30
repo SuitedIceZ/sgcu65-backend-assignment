@@ -16,11 +16,15 @@ module.exports = async function (collection,callback) {
 
     //const res = await db.collection('users').doc('aturing').delete();
     if(collection == "Users" || collection == "Tasks"){
-        const snapshot = await db.collection('Users').get();
+        var output = "{\"collection\":\"" + collection + "\",";
+        const snapshot = await db.collection(collection).get();
             snapshot.forEach((doc) => {
-            console.log(doc.id, '=>', doc.data());
+            console.log(doc.id, doc.data().firstname, ' =>', doc.data());
+
+            output += parseDocument(collection,doc.data())
         });
-        const output = "/{\"name\": \"ice\"}";
+        output = output.substring(0,output.length-1);
+        output += "}";
         setTimeout( () => 
             callback(null,
             {
@@ -35,4 +39,28 @@ module.exports = async function (collection,callback) {
             null) , 
             100);
     }
+}
+
+function parseDocument(collection,docData)
+{
+
+    var ret = "";
+    if(collection == "Users"){
+        ret += `{\"firstname\": \"${docData.firstname}\",`;
+        ret += `\"surname\": \"${docData.surname}\",`;
+        ret += `\"email\": \"${docData.email}\",`;
+        ret += `\"role\": \"${docData.role}\",`;
+    
+        ret += `\"Tasks\": `;
+        for(var i = 0 ; i < docData.Tasks.length ; i++){
+            ret += `\[\"${docData.Tasks[i]}\"\]`
+            if(i != docData.Tasks.length - 1)ret += ",";
+        }
+        ret += "},";
+        return ret;
+    }
+    else{
+        return "ERROR";
+    }
+
 }

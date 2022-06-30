@@ -19,7 +19,7 @@ const keywordPlural = "Users"; // replace Users by ' + keywordPlural + ' // for 
 UserRouter.route('/')
     .all((req,res,next)=>{
         res.statusCode = 200;
-        res.setHeader('Content-Type','text/plain');
+        res.setHeader('Content-Type','application/json');
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
@@ -32,7 +32,7 @@ UserRouter.route('/')
             }
             else{
                 console.log('Test new module : ' + output.data() + ' to you!');
-                res.end('Test new module : ' +  output.data() + ' to you!');
+                res.end(output.data());
             }
         }) 
         
