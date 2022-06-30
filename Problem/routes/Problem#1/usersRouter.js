@@ -2,6 +2,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+//file node module
+const dbGET = require("./../firebaseModule/firestoreGET");
+
 //create UserRouter as express router
 const UserRouter = express.Router();
 
@@ -20,7 +23,19 @@ UserRouter.route('/')
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        res.end('Will send all the ' + keywordPlural + ' to you!');
+        //res.end('Will send all the ' + keywordPlural + ' to you!');
+        dbGET("Users",(err,output) =>{
+            if(err){
+                res.statusCode = 500;
+                console.log("ERROR : ", err.message);
+                res.end("ERROR : ", err.message);
+            }
+            else{
+                console.log('Test new module : ' + output.data() + ' to you!');
+                res.end('Test new module : ' +  output.data() + ' to you!');
+            }
+        }) 
+        
     })
     .post((req,res,next) => { //use http POST REST request
         res.end('Will add the ' + keywordSigular + ': ' + req.body);

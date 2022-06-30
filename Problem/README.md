@@ -2,7 +2,8 @@
 
 โดย นาย ณัฐนภนต์ บำรุงศรี
 
-Stack ที่ใช้ : Node.js, Express, MongoDB
+Stack ที่ใช้ : Node.js, Express
+Database ที่ใช้ : Cloud Firestore
 
 # Installation **(not finished yet)**
 
