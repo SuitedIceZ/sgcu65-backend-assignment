@@ -46,8 +46,20 @@ module.exports = async function (req,collection,callback) {
         })
     }
     else if(req.method == "PUT"){
-        console.log("PUT Got to firestoreHandler.js");
         await dbPUT(req,db,collection,(err,output) => {
+            if(err){ setTimeout( () => callback(err,null) , 500); }
+            else{
+                setTimeout( () => 
+                callback(null,
+                {
+                    data: () => (output.data())
+                }) , 
+                500);
+            }
+        })
+    }
+    else if(req.method == "DELETE"){
+        await dbDELETE(req,db,collection,(err,output) => {
             if(err){ setTimeout( () => callback(err,null) , 500); }
             else{
                 setTimeout( () => 

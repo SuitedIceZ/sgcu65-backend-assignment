@@ -22,6 +22,7 @@ TaskRouter.route('/')
         res.setHeader('Content-Type','application/json');
 
         if(req.method == "PUT")next();
+        if(req.method == "DELETE")req.body.deleteAllFlag = true;
 
         dbHandler(req,collection,(err,outputCallback) =>{
             if(err){ //Error handler
@@ -65,7 +66,7 @@ TaskRouter.route('/')
         }`);
     })
     .delete((req,res,next) => { //use http DELETE REST request
-        res.end('Deleting all the ' + collection + '!');
+        res.end(output);
     });
 
 //route with key parameter
@@ -75,6 +76,7 @@ TaskRouter.route('/:key')
         res.setHeader('Content-Type','application/json');
 
         if(req.method == "POST")next();
+        if(req.method == "DELETE")req.body.deleteAllFlag = false;
 
         dbHandler(req,collection,(err,outputCallback) =>{
             if(err){
@@ -116,7 +118,7 @@ TaskRouter.route('/:key')
         res.end(output);
     })
     .delete((req,res,next) => { //use http DELETE REST request
-        res.end('Deleting the ' + collection + ': '+ req.params.key );
+        res.end(output);
     });
 
 
