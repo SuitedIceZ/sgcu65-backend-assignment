@@ -14,16 +14,14 @@ module.exports = async function (req,db,collection,callback) {
 
         snapshot.forEach((doc) => {
             if(collection == "Users"){
-                if(key == "" || key == undefined || doc.data().firstname + " " + doc.data().surname == key || doc.data().role == key){
-                    console.log(doc.id, doc.data().firstname, ' => ', doc.data());
+                if(key == undefined || doc.data().firstname + " " + doc.data().surname == key || doc.data().role == key){
                     cnt++;
                     output += parseDocument(collection,doc);
                 }
             }
             if(collection == "Tasks"){
                 //console.log("Called by key : " + key);
-                if(key == "" || key == undefined || doc.data().name == key || doc.id == key){
-                    console.log(doc.id, doc.data().firstname, ' => ', doc.data());
+                if(key == undefined || doc.data().name == key || doc.id == key){
                     cnt++;
                     output += parseDocument(collection,doc);
                 }
@@ -55,7 +53,8 @@ function parseDocument(collection,doc)
         ret += `\"surname\": \"${docData.surname}\",`;
         ret += `\"email\": \"${docData.email}\",`;
         ret += `\"role\": \"${docData.role}\",`;
-    
+        ret += `\"id\": \"${doc.id}\",`;
+
         ret += `\"Tasks\": [`;
         if(docData.Tasks != null){
             for(var i = 0 ; i < docData.Tasks.length ; i++){
