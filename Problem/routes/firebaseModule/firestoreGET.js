@@ -14,7 +14,7 @@ module.exports = async function (req,db,collection,callback) {
 
         snapshot.forEach((doc) => {
             if(collection == "Users"){
-                if(key == undefined || doc.data().firstname + " " + doc.data().surname == key || doc.data().role == key){
+                if(key == undefined || doc.data().firstname + " " + doc.data().surname == key || doc.data().role == key || doc.id == key){
                     cnt++;
                     output += parseDocument(collection,doc);
                 }
@@ -39,7 +39,7 @@ module.exports = async function (req,db,collection,callback) {
         100);
     }
     else{
-        setTimeout( () => callback("Invalid collection",null) , 10);
+        setTimeout( () => callback("403 Invalid collection",null) , 10);
     }
 
 }

@@ -34,18 +34,32 @@ module.exports = async function (req,collection,callback) {
     }
     else if(req.method == "POST"){
         await dbPOST(req,db,collection,(err,output) => {
-            if(err){ setTimeout( () => callback(err,null) , 1000); }
+            if(err){ setTimeout( () => callback(err,null) , 500); }
             else{
                 setTimeout( () => 
                 callback(null,
                 {
                     data: () => (output.data())
                 }) , 
-                1000);
+                500);
+            }
+        })
+    }
+    else if(req.method == "PUT"){
+        console.log("PUT Got to firestoreHandler.js");
+        await dbPUT(req,db,collection,(err,output) => {
+            if(err){ setTimeout( () => callback(err,null) , 500); }
+            else{
+                setTimeout( () => 
+                callback(null,
+                {
+                    data: () => (output.data())
+                }) , 
+                500);
             }
         })
     }
     else{
-        setTimeout( () => callback("Invalid method",null) , 10);
+        setTimeout( () => callback("405 Invalid method",null) , 10);
     }
 }

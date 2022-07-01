@@ -25,20 +25,23 @@ TaskRouter.route('/')
 
         dbHandler(req,collection,(err,outputCallback) =>{
             if(err){ //Error handler
-                if(err == "403 Forbidden"){
-                    res.statusCode = 403;
+                if(parseInt(err.substr(0,3)) == NaN){
+                    res.statusCode = 500;
+                }
+                else if(300 <= parseInt(err.substr(0,3)) && parseInt(err.substr(0,3)) < 500){
+                    res.statusCode = parseInt(err.substr(0,3)) ;
                 }
                 else{
                     res.statusCode = 500;
                 }
                 console.log(`{
                     "statusCode" : ${res.statusCode},
-                    "error" : "${err}"
+                    "error" : "${err.substr(4,err.length-4)}"
                 }`);
                 res.end(`{
                     "statusCode" : ${res.statusCode},
-                    "error" : "${err}"
-                }`);
+                    "error" : "${err.substr(4,err.length-4)}"
+                }`, );
             }
             else{
                 output = outputCallback.data();
@@ -73,25 +76,27 @@ TaskRouter.route('/:key')
 
         if(req.method == "POST")next();
 
-        dbHandler(req,"Tasks",(err,outputCallback) =>{
+        dbHandler(req,collection,(err,outputCallback) =>{
             if(err){
-                if(err == "403 Forbidden"){
-                    res.statusCode = 403;
+                if(parseInt(err.substr(0,3)) == NaN){
+                    res.statusCode = 500;
+                }
+                else if(300 <= parseInt(err.substr(0,3)) && parseInt(err.substr(0,3)) < 500){
+                    res.statusCode = parseInt(err.substr(0,3)) ;
                 }
                 else{
                     res.statusCode = 500;
                 }
                 console.log(`{
                     "statusCode" : ${res.statusCode},
-                    "error" : "${err}"
+                    "error" : "${err.substr(4,err.length-4)}"
                 }`);
                 res.end(`{
                     "statusCode" : ${res.statusCode},
-                    "error" : "${err}"
+                    "error" : "${err.substr(4,err.length-4)}"
                 }`, );
             }
             else{
-                console.log('Test new module : ' + outputCallback.data() + ' to you!');
                 output = outputCallback.data();
                 next(); //continue to the next specific request
             }
@@ -104,12 +109,11 @@ TaskRouter.route('/:key')
         res.statusCode = 405;
         res.end(`{
             "statusCode" : ${res.statusCode},
-            "error" : "PUT operation not supported on /${collection}/${req.params.key}"
+            "error" : "POST operation not supported on /${collection}/${req.params.key}"
         }`);
     })
     .put((req,res,next) => { //use http PUT REST request
-        res.write('Updating the ' + collection + ': ' + req.params.key + '\n');
-        res.end('Will update the ' + collection + ': ' + req.body);
+        res.end(output);
     })
     .delete((req,res,next) => { //use http DELETE REST request
         res.end('Deleting the ' + collection + ': '+ req.params.key );
