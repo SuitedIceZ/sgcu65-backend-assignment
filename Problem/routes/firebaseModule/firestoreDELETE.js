@@ -4,6 +4,7 @@ const dbGET = require("./firestoreGET");
 var destID = "";
 
 module.exports = async function (req,db,collection,callback) {
+    const key = req.params.key; //key is name-surname or id , name or id
     if(collection == "Users" || collection == "Tasks"){
         const snapshot = await db.collection(collection).get();
         var found = false;

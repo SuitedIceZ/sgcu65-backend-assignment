@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 //file node module
 const dbHandler = require("./../firebaseModule/firestoreHandler");
+const dbErrorHandler = require("../firebaseModule/firestoreErrorHandler");
 
 //create TaskRouter as express router
 const TaskRouter = express.Router();
@@ -26,23 +27,10 @@ TaskRouter.route('/')
 
         dbHandler(req,collection,(err,outputCallback) =>{
             if(err){ //Error handler
-                if(parseInt(err.substr(0,3)) == NaN){
-                    res.statusCode = 500;
-                }
-                else if(300 <= parseInt(err.substr(0,3)) && parseInt(err.substr(0,3)) < 500){
-                    res.statusCode = parseInt(err.substr(0,3)) ;
-                }
-                else{
-                    res.statusCode = 500;
-                }
-                console.log(`{
-                    "statusCode" : ${res.statusCode},
-                    "error" : "${err.substr(4,err.length-4)}"
-                }`);
-                res.end(`{
-                    "statusCode" : ${res.statusCode},
-                    "error" : "${err.substr(4,err.length-4)}"
-                }`, );
+                dbErrorHandler(err,(respond) => {
+                    res.statusCode = respond.statusCodeData();
+                    res.end(respond.endData());
+                })
             }
             else{
                 output = outputCallback.data();
@@ -80,23 +68,10 @@ TaskRouter.route('/:key')
 
         dbHandler(req,collection,(err,outputCallback) =>{
             if(err){
-                if(parseInt(err.substr(0,3)) == NaN){
-                    res.statusCode = 500;
-                }
-                else if(300 <= parseInt(err.substr(0,3)) && parseInt(err.substr(0,3)) < 500){
-                    res.statusCode = parseInt(err.substr(0,3)) ;
-                }
-                else{
-                    res.statusCode = 500;
-                }
-                console.log(`{
-                    "statusCode" : ${res.statusCode},
-                    "error" : "${err.substr(4,err.length-4)}"
-                }`);
-                res.end(`{
-                    "statusCode" : ${res.statusCode},
-                    "error" : "${err.substr(4,err.length-4)}"
-                }`, );
+                dbErrorHandler(err,(respond) => {
+                    res.statusCode = respond.statusCodeData();
+                    res.end(respond.endData());
+                })
             }
             else{
                 output = outputCallback.data();
