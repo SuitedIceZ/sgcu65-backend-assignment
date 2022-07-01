@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 //file node module
-const dbGET = require("./../firebaseModule/firestore");
+const dbHandler = require("./../firebaseModule/firestoreHandler");
 
 //create TaskRouter as express router
 const TaskRouter = express.Router();
@@ -23,7 +23,7 @@ TaskRouter.route('/')
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        dbGET("Tasks","",(err,output) =>{
+        dbHandler("GET","Tasks","",(err,output) =>{
             if(err){
                 res.statusCode = 500;
                 console.log("ERROR : ", err.message);
@@ -54,7 +54,7 @@ TaskRouter.route('/:key')
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        dbGET("Tasks",req.params.key,(err,output) =>{
+        dbHandler("GET","Tasks",req.params.key,(err,output) =>{
             if(err){
                 res.statusCode = 500;
                 console.log("ERROR : ", err.message);

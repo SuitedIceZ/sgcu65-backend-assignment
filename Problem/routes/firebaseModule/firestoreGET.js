@@ -1,20 +1,5 @@
-// Import the firebase module
-const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
 
-// Initialize Firebase
-var serviceAccount = require("./serviceAccountKey.json");
-initializeApp({
-  credential: cert(serviceAccount)
-});
-const db = getFirestore();
-
-module.exports = async function (collection,key,callback) {
-    //for read all document
-
-    console.log("Called GET funtion with "+ collection);//+ input);
-
-    //const res = await db.collection('users').doc('aturing').delete();
+module.exports = async function (db,collection,key,callback) {
     if(collection == "Users" || collection == "Tasks"){
 
         var output = "{\"message\":\"OK\",";
@@ -29,17 +14,17 @@ module.exports = async function (collection,key,callback) {
         snapshot.forEach((doc) => {
             if(collection == "Users"){
                 if(key == "" || doc.data().firstname + " " + doc.data().surname == key || doc.data().email == key){
-                    console.log(doc.id, doc.data().firstname, ' =>', doc.data());
+                    console.log(doc.id, doc.data().firstname, ' => ', doc.data());
                     cnt++;
-                    output += parseDocument(collection,doc.data());
+                    output += parseDocument(collection,doc);
                 }
             }
             if(collection == "Tasks"){
                 //console.log("Called by key : " + key);
                 if(key == "" || doc.data().name == key || doc.id == key){
-                    console.log(doc.id, doc.data().firstname, ' =>', doc.data());
+                    console.log(doc.id, doc.data().firstname, ' => ', doc.data());
                     cnt++;
-                    output += parseDocument(collection,doc.data());
+                    output += parseDocument(collection,doc);
                 }
             }
         });
@@ -48,24 +33,18 @@ module.exports = async function (collection,key,callback) {
         output += "}";
 
         setTimeout( () => 
-            callback(null,
-            {
-                data: () => (output)
-            }) , 
-            100);
-        
+        callback(null,
+        {
+            data: () => (output)
+        }) , 
+        100);
     }
-    else{
-        setTimeout( () => 
-            callback(new Error("Not found collection : " + collection),
-            null) , 
-            100);
-    }
+
 }
 
-function parseDocument(collection,docData)
+function parseDocument(collection,doc)
 {
-
+    const docData = doc.data() ;
     var ret = "";
     if(collection == "Users"){
         ret += `[\"firstname\": \"${docData.firstname}\",`;
@@ -86,7 +65,8 @@ function parseDocument(collection,docData)
         ret += `\"content\": \"${docData.content}\",`;
         ret += `\"status\": \"${docData.status}\",`;
         ret += `\"deadline\": \"${docData.deadline}\",`;
-    
+        ret += `\"id\": \"${doc.id}\",`;
+        
         ret += `\"Users\": `;
         for(var i = 0 ; i < docData.Users.length ; i++){
             ret += `\[\"${docData.Users[i]}\"\]`

@@ -3,8 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 //file node module
-const dbGET = require("../firebaseModule/firestore");
-//const dbQuery = require("./../firebaseModule/firestoreQuery");
+const dbHandler = require("../firebaseModule/firestoreHandler");
 
 //create UserRouter as express router
 const UserRouter = express.Router();
@@ -25,7 +24,7 @@ UserRouter.route('/')
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
         //res.end('Will send all the ' + keywordPlural + ' to you!');
-        dbGET("Users","",(err,output) =>{
+        dbHandler("GET","Users","",(err,output) =>{
             if(err){
                 res.statusCode = 500;
                 console.log("ERROR : ", err.message);
@@ -58,7 +57,7 @@ UserRouter.route('/:key')
         next(); //continue to the next specific request
     })
     .get((req,res,next) => { //execute after .all(...) by next(); include parameter 
-        dbGET("Users",req.params.key,(err,output) =>{
+        dbHandler("GET","Users",req.params.key,(err,output) =>{
             if(err){
                 res.statusCode = 500;
                 console.log("ERROR : ", err.message);
