@@ -4,6 +4,10 @@ const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestor
 
 // Import file node module
 const dbGET = require("./firestoreGET");
+const dbPUT = require("./firestorePUT");
+const dbPOST = require("./firestorePOST");
+const dbDELETE = require("./firestoreDELETE");
+
 
 // Initialize Firebase
 var serviceAccount = require("./serviceAccountKey.json");
@@ -12,19 +16,32 @@ initializeApp({
 });
 const db = getFirestore();
 
-module.exports = async function (method,collection,key,callback) {
+module.exports = async function (req,collection,callback) {
     //const res = await db.collection('users').doc('aturing').delete();
 
-    if(method == "GET"){
-        await dbGET(db,collection,key,(err,output) => {
-            if(err){ setTimeout( () => callback(err,null) , 100); }
+    if(req.method == "GET"){
+        await dbGET(req,db,collection,(err,output) => {
+            if(err){ setTimeout( () => callback(err,null) , 1000); }
             else{
                 setTimeout( () => 
                 callback(null,
                 {
                     data: () => (output.data())
                 }) , 
-                100);
+                1000);
+            }
+        })
+    }
+    else if(req.method == "POST"){
+        await dbPOST(req,db,collection,(err,output) => {
+            if(err){ setTimeout( () => callback(err,null) , 1000); }
+            else{
+                setTimeout( () => 
+                callback(null,
+                {
+                    data: () => (output.data())
+                }) , 
+                1000);
             }
         })
     }

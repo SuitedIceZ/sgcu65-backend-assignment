@@ -1,19 +1,20 @@
 
-module.exports = async function (db,collection,key,callback) {
+module.exports = async function (req,db,collection,callback) {
+    const key = req.params.key;
     if(collection == "Users" || collection == "Tasks"){
 
         var output = "{\"message\":\"OK\",";
         output += "\"collection\":\"" + collection + "\",";
-        output += "\"key\":\"" + key + "\",";
+        output += "\"query-key\":\"" + key + "\",";
         
-        output += "\"data\": ";
+        output += "\"data\": [";
         
         const snapshot = await db.collection(collection).get();
         var cnt = 0
 
         snapshot.forEach((doc) => {
             if(collection == "Users"){
-                if(key == "" || doc.data().firstname + " " + doc.data().surname == key || doc.data().email == key){
+                if(key == "" || key == undefined || doc.data().firstname + " " + doc.data().surname == key || doc.data().role == key){
                     console.log(doc.id, doc.data().firstname, ' => ', doc.data());
                     cnt++;
                     output += parseDocument(collection,doc);
@@ -21,7 +22,7 @@ module.exports = async function (db,collection,key,callback) {
             }
             if(collection == "Tasks"){
                 //console.log("Called by key : " + key);
-                if(key == "" || doc.data().name == key || doc.id == key){
+                if(key == "" || key == undefined || doc.data().name == key || doc.id == key){
                     console.log(doc.id, doc.data().firstname, ' => ', doc.data());
                     cnt++;
                     output += parseDocument(collection,doc);
@@ -30,7 +31,7 @@ module.exports = async function (db,collection,key,callback) {
         });
         output = output.substring(0,output.length-1);
         if(cnt == 0) output += "null"; 
-        output += "}";
+        output += "]}";
 
         setTimeout( () => 
         callback(null,
@@ -38,6 +39,9 @@ module.exports = async function (db,collection,key,callback) {
             data: () => (output)
         }) , 
         100);
+    }
+    else{
+        setTimeout( () => callback("Invalid collection",null) , 10);
     }
 
 }
@@ -47,32 +51,36 @@ function parseDocument(collection,doc)
     const docData = doc.data() ;
     var ret = "";
     if(collection == "Users"){
-        ret += `[\"firstname\": \"${docData.firstname}\",`;
+        ret += `{\"firstname\": \"${docData.firstname}\",`;
         ret += `\"surname\": \"${docData.surname}\",`;
         ret += `\"email\": \"${docData.email}\",`;
         ret += `\"role\": \"${docData.role}\",`;
     
-        ret += `\"Tasks\": `;
-        for(var i = 0 ; i < docData.Tasks.length ; i++){
-            ret += `\[\"${docData.Tasks[i]}\"\]`
-            if(i != docData.Tasks.length - 1)ret += ",";
+        ret += `\"Tasks\": [`;
+        if(docData.Tasks != null){
+            for(var i = 0 ; i < docData.Tasks.length ; i++){
+                ret += `\"${docData.Tasks[i]}\"`
+                if(i != docData.Tasks.length - 1)ret += ",";
+            }
         }
-        ret += "],";
+        ret += "]},";
         return ret;
     }
     else if(collection == "Tasks"){
-        ret += `[\"name\": \"${docData.name}\",`;
+        ret += `{\"name\": \"${docData.name}\",`;
         ret += `\"content\": \"${docData.content}\",`;
         ret += `\"status\": \"${docData.status}\",`;
         ret += `\"deadline\": \"${docData.deadline}\",`;
         ret += `\"id\": \"${doc.id}\",`;
         
-        ret += `\"Users\": `;
-        for(var i = 0 ; i < docData.Users.length ; i++){
-            ret += `\[\"${docData.Users[i]}\"\]`
-            if(i != docData.Users.length - 1)ret += ",";
+        ret += `\"Users\": [`;
+        if(docData.Users != null){
+            for(var i = 0 ; i < docData.Users.length ; i++){
+                ret += `\"${docData.Users[i]}\"`
+                if(i != docData.Users.length - 1)ret += ",";
+            }
         }
-        ret += "],";
+        ret += "]},";
         return ret;
     }
     else{

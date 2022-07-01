@@ -3,6 +3,7 @@
 โดย นาย ณัฐนภนต์ บำรุงศรี
 
 Stack ที่ใช้ : Node.js, Express
+
 Database ที่ใช้ : Cloud Firestore
 
 # Installation **(not finished yet)**
@@ -48,9 +49,16 @@ Database ที่ใช้ : Cloud Firestore
     ```
 2. To be continue ...
 
-# Addtional Idea : เพิ่ม field Tasks ในแต่ละ user เก็บ array ของ task ทั้งหมดที่ user นั้นๆรับผิดชอบ
+# Addtional Idea : 
+1. เพิ่ม field Tasks ในแต่ละ user เก็บ array ของ task ทั้งหมดที่ user นั้นๆรับผิดชอบ
+    
+2. เพิ่ม field Users ในแต่ละ task เก็บ array ของ user ทั้งหมดที่รับผิดชอบ task นั้นๆ
 
-# Addtional Idea : เพิ่ม field Users ในแต่ละ task เก็บ array ของ user ทั้งหมดที่รับผิดชอบ task นั้นๆ
+# Assumption : 
+1. ชื่อ-นามสกุลแต่ละ Users สามารถมีหลายชุดข้อมูลซ้ำกันได้ (id ไม่ซ้ำ)
+
+2. ชื่อแต่ละ Tasks สามารถมีหลายชุดข้อมูลซ้ำกันได้ แต่ id ไม่ซ้ำ
+
 
 
 
