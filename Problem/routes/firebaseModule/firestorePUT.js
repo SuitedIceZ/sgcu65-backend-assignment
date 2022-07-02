@@ -37,6 +37,20 @@ module.exports = async function (req,db,router,callback) {
             setTimeout( () => callback("403 document not found",null) , 10); 
         }
         else{
+            if(router == "Assign"){
+                const docRef = db.collection(collection).doc(destID);
+                const doc = await docRef.get();
+                const combinedTasks = unionTasks(doc.data().Tasks,req.body.Tasks);
+                const check = await tasksExist(combinedTasks,db,"Tasks");
+                if(check){
+                    req.body.Tasks = combinedTasks;
+                }
+                else{
+                    callback("403 Some tasks not exist",null);
+                    return false;
+                }
+            }
+
             await update(req,db,router,destID);
             req.params.key = undefined;
             await outputGET(req,db,collection,callback);
@@ -75,6 +89,7 @@ async function update(req,db,router,destID){
     }
     else if(router == "Assign"){
         console.log(`Test router assign in update : ${doc.data().firstname} , ${doc.data().surname} , ${doc.data().role} , ${doc.data().email} , ${req.body.Tasks}`)
+
         await docRef.set({
             firstname: doc.data().firstname,
             surname: doc.data().surname,
@@ -118,4 +133,44 @@ function isValidReqBody(req,router){
         }
         return true;
     }
+}
+
+function unionTasks(userTasks,inputTasks){
+    var tasksSet = new Set();
+
+    if(userTasks != null){
+        for(var i = 0 ; i < userTasks.length ; i ++){
+            tasksSet.add(userTasks[i]);
+        }
+    }
+    if(inputTasks != null){
+        for(var i = 0 ; i < inputTasks.length ; i ++){
+            tasksSet.add(inputTasks[i]);
+        }
+    }
+    
+    var outputArray = [];
+    var cnt = 0;
+    for(let item of tasksSet){
+        outputArray[cnt++] = item;
+    }
+    return outputArray;
+}
+
+async function tasksExist(combinedTasks,db,collection){
+
+    var combinedTasksSet = new Set();
+    for(var i = 0 ; i < combinedTasks.length ; i ++){
+        combinedTasksSet.add(combinedTasks[i]);
+    }
+
+    //delete each tasks in database until empty to check
+    const snapshot = await db.collection(collection).get();
+    await snapshot.forEach((doc) => {
+        if(combinedTasksSet.has(doc.data().name)){
+            combinedTasksSet.delete(doc.data().name);
+        }
+    });
+    
+    return combinedTasksSet.size == 0;
 }
