@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 //file node module
 const usersRouter = require('./routes/Problem#1/usersRouter');
 const tasksRouter = require('./routes/Problem#2/tasksRouter');
+const assignRouter = require('./routes/Problem#3/assignRouter');
 
 //URLs const
 const hostname = "localhost";
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 //use file node module
 app.use('/Users',usersRouter);
 app.use('/Tasks',tasksRouter);
+app.use('/Assign',assignRouter);
 
 //use public static file 
 app.use(express.static(__dirname+'/public'));

@@ -16,11 +16,11 @@ initializeApp({
 });
 const db = getFirestore();
 
-module.exports = async function (req,collection,callback) {
-    //const res = await db.collection('users').doc('aturing').delete();
+module.exports = async function (req,router,callback) {
+    //const res = await db.router('users').doc('aturing').delete();
 
     if(req.method == "GET"){
-        await dbGET(req,db,collection,(err,output) => {
+        await dbGET(req,db,router,(err,output) => {
             if(err){ setTimeout( () => callback(err,null) , 1000); }
             else{
                 setTimeout( () => 
@@ -33,7 +33,7 @@ module.exports = async function (req,collection,callback) {
         })
     }
     else if(req.method == "POST"){
-        await dbPOST(req,db,collection,(err,output) => {
+        await dbPOST(req,db,router,(err,output) => {
             if(err){ setTimeout( () => callback(err,null) , 500); }
             else{
                 setTimeout( () => 
@@ -46,7 +46,7 @@ module.exports = async function (req,collection,callback) {
         })
     }
     else if(req.method == "PUT"){
-        await dbPUT(req,db,collection,(err,output) => {
+        await dbPUT(req,db,router,(err,output) => {
             if(err){ setTimeout( () => callback(err,null) , 500); }
             else{
                 setTimeout( () => 
@@ -59,7 +59,7 @@ module.exports = async function (req,collection,callback) {
         })
     }
     else if(req.method == "DELETE"){
-        await dbDELETE(req,db,collection,(err,output) => {
+        await dbDELETE(req,db,router,(err,output) => {
             if(err){ setTimeout( () => callback(err,null) , 500); }
             else{
                 setTimeout( () => 

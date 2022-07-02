@@ -13,7 +13,7 @@ const UserRouter = express.Router();
 UserRouter.use(bodyParser.json());
 
 //configulation
-const collection = "Users"; // collection name
+const routerName = "Users"; // routerName name
 
 var output = "";
 //route for all Users
@@ -25,7 +25,7 @@ UserRouter.route('/')
         if(req.method == "PUT")next();
         if(req.method == "DELETE")req.body.deleteAllFlag = true;
 
-        dbHandler(req,collection,(err,outputCallback) => {
+        dbHandler(req,routerName,(err,outputCallback) => {
             if(err){ //Error Handler
                 dbErrorHandler(err,(respond) => {
                     res.statusCode = respond.statusCodeData();
@@ -50,7 +50,7 @@ UserRouter.route('/')
         res.statusCode = 405;
         res.end(`{
             "statusCode" : ${res.statusCode},
-            "error" : "PUT operation not supported on /${collection}"
+            "error" : "PUT operation not supported on /${routerName}"
         }`);
     })
     .delete((req,res,next) => { //use http DELETE REST request
@@ -67,7 +67,7 @@ UserRouter.route('/:key')
         if(req.method == "POST")next();
         if(req.method == "DELETE")req.body.deleteAllFlag = false;
 
-        dbHandler(req,collection,(err,outputCallback) =>{
+        dbHandler(req,routerName,(err,outputCallback) =>{
             if(err){
                 dbErrorHandler(err,(respond) => {
                     res.statusCode = respond.statusCodeData();
@@ -87,7 +87,7 @@ UserRouter.route('/:key')
         res.statusCode = 405;
         res.end(`{
             "statusCode" : ${res.statusCode},
-            "error" : "POST operation not supported on /${collection}/${req.params.key}"
+            "error" : "POST operation not supported on /${routerName}/${req.params.key}"
         }`);
     })
     .put((req,res,next) => { //use http PUT REST request
