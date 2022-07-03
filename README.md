@@ -1,4 +1,4 @@
-[ณัฐนภนต์ บำรุงศรี]
+Natnaphon Bumrungsri
 
 # SGCU65 Backend Recruitment
 

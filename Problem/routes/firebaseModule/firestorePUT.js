@@ -220,14 +220,4 @@ async function updateAllTasks(req,combinedTasks,db){
             await update(req,db,"Tasks",doc.id);
         }
     }
-    // await snapshot.forEach((doc) => {
-    //     if(combinedTasksSet.has(doc.data().name)){
-    //         req.body.name = doc.data().name;
-    //         req.body.content = doc.data().content;
-    //         req.body.status = doc.data().status;
-    //         req.body.deadline = doc.data().deadline;
-    //         req.body.Users = unionArray([Fullname],doc.data().Users);
-    //         update(req,db,"Tasks",doc.id);
-    //     }
-    // });
 }
