@@ -6,7 +6,7 @@ Stack ที่ใช้ : Node.js, Express
 
 Database ที่ใช้ : Cloud Firestore
 
-# Installation **(not finished yet)**
+# Installation (คาดว่าเป็น package ที่ work บน windows os)
 
 1. เปิด Terminal ที่ folder Problem
 
@@ -15,7 +15,6 @@ Database ที่ใช้ : Cloud Firestore
     npm install package-lock.json
     ```
 
-3. **not finished yet**
 
 # Starting Server :
 
@@ -30,7 +29,7 @@ Database ที่ใช้ : Cloud Firestore
 
 # Usage
 
-## โจทย์ข้อที่ 1 : **User**
+## Service ที่ 1 : **User**
 
 1. สามารถเพิ่มพนักงานใหม่เข้าไปในระบบได้(Create)
     
@@ -43,8 +42,26 @@ Database ที่ใช้ : Cloud Firestore
     {
         "email": "6332014621@student.chula.ac.th",
         "firstname": "Natnaphon",
-        "lastname": "Bumrungsri",
+        "surname": "Bumrungsri",
         "role": "Backend Developer"
+    }
+    ```
+    จะได้ Respond ที่มี body JSON แสดงข้อมูล Users ทั้งหมดใน database
+    ```js
+    {
+        "message": "Created",
+        "collection": "Users",
+        "query-key": "undefined",
+        "data": [
+            {
+                "firstname": "Natnaphon",
+                "surname": "Bumrungsri",
+                "email": "6332014621@student.chula.ac.th",
+                "role": "Backend Developer",
+                "id": "AtRi7wzXF0AVaW33AMRr",
+                "Tasks": []
+            }
+        ]
     }
     ```
 2. To be continue ...
@@ -68,6 +85,8 @@ Database ที่ใช้ : Cloud Firestore
     undefined
     ``` 
     ได้
+
+4. การ assign จะสามารถ assign task ที่มีอยู่ใน database ให้ user ที่อยู่ใน database เท่านั้น
 
 
 

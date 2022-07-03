@@ -4,6 +4,7 @@ module.exports = async function (req,db,collection,callback) {
     if(collection == "Users" || collection == "Tasks"){
 
         var output = "{\"message\":\"OK\",";
+        if(req.method == "POST")output = "{\"message\":\"Created\","
         output += "\"collection\":\"" + collection + "\",";
         output += "\"query-key\":\"" + key + "\",";
         
@@ -28,8 +29,9 @@ module.exports = async function (req,db,collection,callback) {
             }
         });
         output = output.substring(0,output.length-1);
-        if(cnt == 0) output += "null"; 
-        output += "]}";
+        if(cnt == 0) output += "null";
+        else output += "]";
+        output += "}";
 
         setTimeout( () => 
         callback(null,

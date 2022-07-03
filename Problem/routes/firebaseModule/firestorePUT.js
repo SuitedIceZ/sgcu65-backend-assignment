@@ -1,6 +1,6 @@
 
 const dbGET = require("./firestoreGET");
-
+const dbHandler = require("./firestoreGET");
 
 module.exports = async function (req,db,router,callback) {
     var destID = "";
@@ -14,7 +14,11 @@ module.exports = async function (req,db,router,callback) {
             setTimeout( () => callback("400 invalid request body",null) , 10);
             return false;
         }
-
+        if(router != "Assign"){
+            req.body.Users = null;
+            req.body.Tasks = null;
+        }
+        
         const snapshot = await db.collection(collection).get();
         var found = false;
         console.log(`Reached snapshot.forEach((doc) by router : ${router} , and key : ${key}`);
@@ -34,16 +38,17 @@ module.exports = async function (req,db,router,callback) {
             }
         });
         if(!found){
-            setTimeout( () => callback("403 document not found",null) , 10); 
+            callback("403 document not found",null)
         }
         else{
             if(router == "Assign"){
                 const docRef = db.collection(collection).doc(destID);
                 const doc = await docRef.get();
-                const combinedTasks = unionTasks(doc.data().Tasks,req.body.Tasks);
-                const check = await tasksExist(combinedTasks,db,"Tasks");
+                const check = await tasksExist(req.body.Tasks,db,"Tasks");
+                const combinedTasks = unionArray(doc.data().Tasks,req.body.Tasks);
                 if(check){
                     req.body.Tasks = combinedTasks;
+                    await updateAllTasks(req,combinedTasks,db);
                 }
                 else{
                     callback("403 Some tasks not exist",null);
@@ -57,7 +62,7 @@ module.exports = async function (req,db,router,callback) {
         }
     }
     else{
-        setTimeout( () => callback("403 Invalid router",null) , 10);
+        callback("403 Invalid router",null)
     }
 
 }
@@ -84,7 +89,7 @@ async function update(req,db,router,destID){
             content: req.body.content,
             status: req.body.status,
             deadline: req.body.deadline,
-            Users: null
+            Users: req.body.Users
         });
     }
     else if(router == "Assign"){
@@ -135,42 +140,94 @@ function isValidReqBody(req,router){
     }
 }
 
-function unionTasks(userTasks,inputTasks){
-    var tasksSet = new Set();
+function unionArray(arrayA,arrayB){
+    var unionSet = new Set();
 
-    if(userTasks != null){
-        for(var i = 0 ; i < userTasks.length ; i ++){
-            tasksSet.add(userTasks[i]);
+    if(arrayA != null){
+        for(var i = 0 ; i < arrayA.length ; i ++){
+            unionSet.add(arrayA[i]);
         }
     }
-    if(inputTasks != null){
-        for(var i = 0 ; i < inputTasks.length ; i ++){
-            tasksSet.add(inputTasks[i]);
+    if(arrayB != null){
+        for(var i = 0 ; i < arrayB.length ; i ++){
+            unionSet.add(arrayB[i]);
         }
     }
     
     var outputArray = [];
     var cnt = 0;
-    for(let item of tasksSet){
+    for(let item of unionSet){
         outputArray[cnt++] = item;
     }
     return outputArray;
 }
 
 async function tasksExist(combinedTasks,db,collection){
-
+    
     var combinedTasksSet = new Set();
     for(var i = 0 ; i < combinedTasks.length ; i ++){
+        console.log("Check task element : "+combinedTasks[i]);
         combinedTasksSet.add(combinedTasks[i]);
     }
 
     //delete each tasks in database until empty to check
     const snapshot = await db.collection(collection).get();
     await snapshot.forEach((doc) => {
+        console.log("In tasksExist , compare : "+doc.data().name);
         if(combinedTasksSet.has(doc.data().name)){
             combinedTasksSet.delete(doc.data().name);
         }
     });
-    
+    console.log("combinedTasksSet.size : "+combinedTasksSet.size);
     return combinedTasksSet.size == 0;
+}
+
+async function updateAllTasks(req,combinedTasks,db){
+
+    var Fullname = null;
+    var snapshot = await db.collection("Users").get();
+    await snapshot.forEach((doc) => {
+        if(req.params.key == doc.id || req.params.key == doc.data().firstname+" "+doc.data().surname){
+            Fullname = doc.data().firstname+" "+doc.data().surname;
+            console.log(`Fullname = ${Fullname} , key = ${req.params.key} , doc.id = ${doc.id}`);
+        }
+    });
+    
+    var combinedTasksSet = new Set();
+    for(var i = 0 ; i < combinedTasks.length ; i ++){
+        combinedTasksSet.add(combinedTasks[i]);
+    }
+
+    snapshot = await db.collection("Tasks").get();
+    var arrayTasksID = [];
+    var cnt = 0;
+    await snapshot.forEach((doc) => {
+        if(combinedTasksSet.has(doc.data().name)){
+            arrayTasksID[cnt++] = doc.id;
+        }
+    })
+    for(let docID of arrayTasksID){
+        const docRef = await db.collection("Tasks").doc(docID);
+        const doc = await docRef.get();
+        console.log(`In last loop : id ${doc.id} , name ${doc.data().name}`);
+        if(combinedTasksSet.has(doc.data().name)){
+            req.body.name = doc.data().name;
+            req.body.content = doc.data().content;
+            req.body.status = doc.data().status;
+            req.body.deadline = doc.data().deadline;
+            req.body.Users = unionArray([Fullname],doc.data().Users);
+            console.log("Before update tasks by assign : ");
+            await update(req,db,"Tasks",doc.id);
+        }
+    }
+    // await snapshot.forEach((doc) => {
+    //     if(combinedTasksSet.has(doc.data().name)){
+    //         req.body.name = doc.data().name;
+    //         req.body.content = doc.data().content;
+    //         req.body.status = doc.data().status;
+    //         req.body.deadline = doc.data().deadline;
+    //         req.body.Users = unionArray([Fullname],doc.data().Users);
+    //         update(req,db,"Tasks",doc.id);
+    //     }
+    // });
 }
