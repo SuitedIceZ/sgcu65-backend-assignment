@@ -536,11 +536,12 @@ Database ที่ใช้ : Cloud Firestore
     }
     ```
     โดยจะเก็บข้อมูลใน collection Tasks ว่าแต่ละ task มี user ใดรับผิดชอบบ้าง ดังนี้
+
     GET Request
     ```
     localhost:3000/Tasks/
     ```
-    จะได้ว่า
+    จะwfhg responds
     ```json
     {
         "message": "OK",

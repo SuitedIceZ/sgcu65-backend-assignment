@@ -10,7 +10,7 @@ const dbDELETE = require("./firestoreDELETE");
 
 
 // Initialize Firebase
-var serviceAccount = require("./serviceAccountKey.json");
+var serviceAccount = require("./private/serviceAccountKey.json");
 initializeApp({
   credential: cert(serviceAccount)
 });
